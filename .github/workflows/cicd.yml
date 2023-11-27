@@ -23,3 +23,12 @@ jobs:
         cd myapp
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        
+   build:
+     runs-on: ubuntu-latest
+     - name: Install Dependencies
+       run: |
+         python hello.py 
+         # python -m pip install --upgrade pip
+         # pip install -r requirements.txt
+
