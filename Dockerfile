@@ -1,12 +1,16 @@
-FROM jenkins/jenkins:2.414.2-jdk11
+FROM alpine/socat
+
+# Install Python and pip
 USER root
-RUN apt-get update && apt-get install -y lsb-release python3-pip
-RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
-  https://download.docker.com/linux/debian/gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) \
-  signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
-  https://download.docker.com/linux/debian \
-  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
-RUN apt-get update && apt-get install -y docker-ce-cli
+RUN apk --update add python3 py3-pip \
+    && adduser -D -u 1000 jenkins \
+    && addgroup jenkins docker
 USER jenkins
-RUN jenkins-plugin-cli --plugins "blueocean:1.25.3 docker-workflow:1.28"
+
+# Set the default Python version
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+
+# Optionally, you can install additional Python packages
+# RUN pip3 install some-package another-package
+
+CMD ["socat", "tcp-listen:2375,fork,reuseaddr", "unix-connect:/var/run/docker.sock"]
