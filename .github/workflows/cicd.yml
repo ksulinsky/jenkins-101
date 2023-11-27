@@ -25,6 +25,7 @@ jobs:
         pip install -r requirements.txt
         
   build:
+    needs: download
     runs-on: ubuntu-latest
     steps:
     - name: Install Dependencies
